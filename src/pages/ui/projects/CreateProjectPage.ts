@@ -54,7 +54,8 @@ export class CreateProjectPage {
 
   async selectAddress(address: string) {
     await this.addressInput.fill(address)
-    await expect(this.addressSuggestions).toBeVisible()
+    await this.addressInput.press('Space')
+    await expect(this.addressSuggestions).toBeVisible({ timeout: 20_000 })
     const exactSuggestion = this.addressSuggestions
       .locator('.address-suggestion')
       .filter({ hasText: address })
