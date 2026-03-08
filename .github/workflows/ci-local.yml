@@ -1,0 +1,97 @@
+name: CI Local (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Test suite to run"
+        required: true
+        default: all
+        type: choice
+        options:
+          - setup
+          - ui
+          - api
+          - all
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  local-tests:
+    name: Run tests on runner
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Prepare .env
+        shell: bash
+        run: |
+          cat > .env <<EOF
+          CI=true
+          BASE_UI_URL=${{ secrets.BASE_UI_URL }}
+          BASE_API_URL=${{ secrets.BASE_API_URL }}
+          UI_TEST_USER_EMAIL=${{ secrets.UI_TEST_USER_EMAIL }}
+          UI_TEST_USER_PASSWORD=${{ secrets.UI_TEST_USER_PASSWORD }}
+          EOF
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run selected suite
+        shell: bash
+        run: |
+          suite="${{ github.event.inputs.suite }}"
+          if [ "$suite" = "setup" ]; then
+            npm run test:setup
+          elif [ "$suite" = "ui" ]; then
+            npm run test:ui
+          elif [ "$suite" = "api" ]; then
+            npm run test:api
+          else
+            npm run test:ui
+            npm run test:api
+          fi
+
+      - name: Collect report
+        if: ${{ always() }}
+        run: |
+          mkdir -p gh-pages
+          if [ -d "playwright-report" ]; then
+            cp -r playwright-report/. gh-pages/
+          fi
+
+      - name: Upload Playwright report artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-playwright-report-${{ github.event.inputs.suite }}
+          path: playwright-report
+          if-no-files-found: warn
+
+      - name: Configure GitHub Pages
+        if: ${{ always() }}
+        uses: actions/configure-pages@v4
+
+      - name: Upload report for GitHub Pages
+        if: ${{ always() }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: gh-pages
+
+      - name: Publish report to GitHub Pages
+        if: ${{ always() }}
+        uses: actions/deploy-pages@v4

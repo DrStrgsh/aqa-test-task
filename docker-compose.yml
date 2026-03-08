@@ -1,0 +1,14 @@
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: testtask1-playwright
+    env_file:
+      - .env
+    working_dir: /app
+    volumes:
+      - ./.auth:/app/.auth
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+    command: npm run test:docker

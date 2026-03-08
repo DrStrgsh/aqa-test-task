@@ -1,0 +1,30 @@
+{
+  "name": "testtask1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --project=ui-guest-chromium --project=ui-guest-firefox --project=ui-guest-webkit --project=ui-guest-mobile-chrome --project=ui-guest-mobile-safari --project=ui-auth-chromium --project=ui-auth-firefox --project=ui-auth-webkit --project=ui-auth-mobile-chrome --project=ui-auth-mobile-safari",
+    "test:api": "playwright test --project=api",
+    "test:setup": "playwright test --project=setup",
+    "test:docker": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "docker:build": "docker compose build",
+    "docker:setup": "docker compose run --rm tests npm run test:setup",
+    "docker:ui": "docker compose run --rm tests npm run test:ui",
+    "docker:api": "docker compose run --rm tests npm run test:api"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.5",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1"
+  }
+}
