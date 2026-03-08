@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from '@playwright/test'
-import { waitPageReady } from '@src/utils/uiWaits'
+import { waitPageReady } from '@src/utils/ui-waits'
 
 export class ProjectsPageMobile {
   private readonly page: Page

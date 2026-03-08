@@ -1,4 +1,4 @@
-import { waitPageReady } from '@src/utils/uiWaits'
+import { waitPageReady } from '@src/utils/ui-waits'
 import { SidebarComponent } from '@src/components/ui/SidebarComponent'
 import type { Page } from '@playwright/test'
 

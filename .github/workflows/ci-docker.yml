@@ -24,6 +24,9 @@ jobs:
     name: Run tests in Docker
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
@@ -86,4 +89,5 @@ jobs:
 
       - name: Publish report to GitHub Pages
         if: ${{ always() }}
+        id: deployment
         uses: actions/deploy-pages@v4

@@ -1,4 +1,4 @@
-import { waitPageReady } from '@src/utils/uiWaits'
+import { waitPageReady } from '@src/utils/ui-waits'
 import { expect, type Page, type Locator } from '@playwright/test'
 import { HeaderComponent } from '@src/components/ui/HeaderComponent'
 

@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from '@playwright/test'
-import { waitPageReady } from '@src/utils/uiWaits'
+import { waitPageReady } from '@src/utils/ui-waits'
 import type { ProjectData } from '@src/factories/ui/projects'
 
 export class CreateProjectPage {
@@ -75,6 +75,7 @@ export class CreateProjectPage {
   }
 
   async submitForm() {
+    await expect(this.createProjectButton).toBeEnabled()
     await this.createProjectButton.click()
   }
 

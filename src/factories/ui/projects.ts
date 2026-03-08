@@ -6,9 +6,10 @@ export interface ProjectData {
 }
 
 export function createProjectData(jurisdiction: string = 'Airway Heights', overrides: Partial<ProjectData> = {}): ProjectData {
+  const randomSuffix = Math.floor(Math.random() * 1_000_000).toString().padStart(6, '0')
   return {
     jurisdiction: jurisdiction,
-    name: `Test Project ${Date.now()}`,
+    name: `Test Project ${Date.now()}-${randomSuffix}`,
     address: 'Alaska',
     apartmentNumber: '123',
     ...overrides,

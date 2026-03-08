@@ -97,7 +97,8 @@ test.fail('mobile projects page: user cannot create project with name length > 3
   const projectData = createProjectData()
   const createProjectPageMobile = new CreateProjectPageMobile(page)
   const showProjectPageMobile = new ShowProjectPageMobile(page)
-  const longName = 'm'.repeat(301)
+  const longNameBase = `Proj-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}-`
+  const longName = `${longNameBase}${'x'.repeat(301)}`.slice(0, 301)
   const longNameData = { ...projectData, name: longName }
 
   await test.step('Create project with long name', async () => {
