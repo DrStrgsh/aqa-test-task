@@ -53,8 +53,7 @@ export class CreateProjectPage {
   }
 
   async selectAddress(address: string) {
-    await this.addressInput.fill(address)
-    await this.addressInput.press('Space')
+    await this.addressInput.pressSequentially(address, { delay: 100 })
     await expect(this.addressSuggestions).toBeVisible({ timeout: 20_000 })
     const exactSuggestion = this.addressSuggestions
       .locator('.address-suggestion')
