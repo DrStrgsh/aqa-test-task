@@ -55,21 +55,18 @@ export class CreateProjectPage {
   async selectAddress(address: string) {
     await expect(this.mapMarker).not.toBeVisible()
     await this.addressInput.pressSequentially(address, { delay: 200 })
-    await expect.soft(
+    await expect(
       this.addressSuggestions,
       `Address suggestions did not appear for: ${address}`
     ).toBeVisible({ timeout: 20_000 })
-    if (await this.addressSuggestions.isVisible()) {
-      const exactSuggestion = this.addressSuggestions
-        .locator('.address-suggestion')
-        .filter({ hasText: address })
-        .first()
+    const exactSuggestion = this.addressSuggestions
+      .locator('.address-suggestion')
+      .filter({ hasText: address })
+      .first()
 
-      if (await exactSuggestion.isVisible()) {
-        await exactSuggestion.click()
-        await expect(this.mapMarker).toBeVisible()
-      }
-    }
+    await expect(exactSuggestion).toBeVisible()
+    await exactSuggestion.click()
+    await expect(this.mapMarker).toBeVisible()
   }
 
   async fillProjectForm(data: ProjectData) {

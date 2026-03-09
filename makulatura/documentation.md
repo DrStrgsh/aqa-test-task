@@ -48,6 +48,7 @@ Also bugs (more time is needed to create additional bug reports):
 - [Some buttons are simply located outside the screen. (You need to scroll sideways to see them.)](https://prnt.sc/ITPmt0hZyB8m)
 - [As well as design decisions regarding the positioning of the Title and the Button.](https://prnt.sc/dO5kkNmnJ42F)
 - [On small monitor screens, the text overflows beyond the boundaries of the components.](https://prnt.sc/FpPvVnTAikwd)
+- Unstable map on the **Create Custom Project** page. The **Address** field freezes when trying to change the address.
 
 ## Short test summary:
 ### For all devices
