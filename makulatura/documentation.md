@@ -47,14 +47,7 @@ Also bugs (more time is needed to create additional bug reports):
 - [On small monitor screens, the text overflows beyond the boundaries of the components.](https://prnt.sc/FpPvVnTAikwd)
 
 ## Short test summary:
-- 1 Setup Test
-- 20 UI Tests
-- 9 API Tests
-
-### UI Tests Status:
-- Passed: 13
-- Failed: 7
-
-### API Tests Status:
-- Passed: 9
-- Failed: 0
+### For all devices
+- Tests: 51
+- Passed: 35
+- Failed: 16

@@ -53,6 +53,7 @@ export class CreateProjectPageMobile {
   }
 
   async selectAddress(address: string) {
+    await expect(this.mapMarker).not.toBeVisible()
     await this.addressInput.pressSequentially(address, { delay: 200 })
     await expect.soft(
       this.addressSuggestions,
@@ -66,6 +67,7 @@ export class CreateProjectPageMobile {
 
       if (await exactSuggestion.isVisible()) {
         await exactSuggestion.click()
+        await expect(this.mapMarker).toBeVisible()
       }
     }
   }
