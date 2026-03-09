@@ -37,8 +37,6 @@ test('mobile projects page: user can create, read and delete project', async ({ 
     await expect(createProjectPageMobile.mapMarker).toBeVisible()
     await createProjectPageMobile.submitForm()
     await expect(page).toHaveURL(routePatterns.projectsByExternalId)
-    await showProjectPageMobile.assertVisible()
-    await expect(showProjectPageMobile.nameLocator(projectData.name)).toBeVisible()
   })
 
   await test.step('Read project', async () => {

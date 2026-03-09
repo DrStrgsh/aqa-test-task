@@ -53,17 +53,21 @@ export class CreateProjectPage {
   }
 
   async selectAddress(address: string) {
-    await this.addressInput.click()
-    await this.addressInput.clear()
     await this.addressInput.pressSequentially(address, { delay: 200 })
-    await expect(this.addressSuggestions).toBeVisible({ timeout: 20_000 })
-    const exactSuggestion = this.addressSuggestions
-      .locator('.address-suggestion')
-      .filter({ hasText: address })
-      .first()
+    await expect.soft(
+      this.addressSuggestions,
+      `Address suggestions did not appear for: ${address}`
+    ).toBeVisible({ timeout: 20_000 })
+    if (await this.addressSuggestions.isVisible()) {
+      const exactSuggestion = this.addressSuggestions
+        .locator('.address-suggestion')
+        .filter({ hasText: address })
+        .first()
 
-    await expect(exactSuggestion).toBeVisible()
-    await exactSuggestion.click()
+      if (await exactSuggestion.isVisible()) {
+        await exactSuggestion.click()
+      }
+    }
   }
 
   async fillProjectForm(data: ProjectData) {

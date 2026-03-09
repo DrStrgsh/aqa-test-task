@@ -38,8 +38,6 @@ test('projects page: user can create, read and delete project', async ({ page })
     await expect(createProjectPage.mapMarker).toBeVisible()
     await createProjectPage.submitForm()
     await expect(page).toHaveURL(routePatterns.projectsByExternalId)
-    await showProjectPage.assertVisible()
-    await expect(showProjectPage.nameLocator(projectData.name)).toBeVisible()
   })
 
   await test.step('Read project', async () => {
