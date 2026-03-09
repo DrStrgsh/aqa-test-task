@@ -38,7 +38,7 @@ export class CreateProjectPage {
 
   async goto() {
     await this.page.goto('/projects/new')
-    await waitPageReady(this.page)
+    await waitPageReady(this.page, { timeoutMs: 90_000 })
   }
 
   async assertVisible() {
@@ -53,7 +53,9 @@ export class CreateProjectPage {
   }
 
   async selectAddress(address: string) {
-    await this.addressInput.pressSequentially(address, { delay: 100 })
+    await this.addressInput.click()
+    await this.addressInput.clear()
+    await this.addressInput.pressSequentially(address, { delay: 200 })
     await expect(this.addressSuggestions).toBeVisible({ timeout: 20_000 })
     const exactSuggestion = this.addressSuggestions
       .locator('.address-suggestion')

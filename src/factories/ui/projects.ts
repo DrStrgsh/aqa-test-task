@@ -10,7 +10,7 @@ export function createProjectData(jurisdiction: string = 'Airway Heights', overr
   return {
     jurisdiction: jurisdiction,
     name: `Test Project ${Date.now()}-${randomSuffix}`,
-    address: 'Alaska',
+    address: 'Asdale Court, Kennesaw, Georgia 30152, United States',
     apartmentNumber: '123',
     ...overrides,
   }
