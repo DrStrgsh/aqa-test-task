@@ -19,6 +19,9 @@ The following cases are covered by automated tests:
    - Empty credentials
 2. Authentication (mobile UI)
    - Valid login
+   - Invalid email format
+   - Wrong password
+   - Empty credentials
 3. Projects (authenticated UI)
    - Navigate to Projects from authenticated home
    - Open Create Project page
