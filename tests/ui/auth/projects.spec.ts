@@ -52,6 +52,7 @@ test('projects page: user can create, read and delete project', async ({ page })
     await projectsPage.assertVisible()
     await projectsPage.openProject(projectData.name)
     await showProjectPage.assertVisible()
+    // Deletion as a part of test flow
     await showProjectPage.deleteProject()
     await expect(page).toHaveURL('/projects')
     await projectsPage.assertVisible()
@@ -126,6 +127,7 @@ test.fail('projects page: user cannot create project with name length > 300', as
     await expect(page).toHaveURL(routePatterns.projectsByExternalId)
     await showProjectPage.assertVisible()
     await expect(showProjectPage.nameLocator(longName.slice(0, 30))).toContainText(longName.slice(0, 30))
+    // Under normal circumstances, deletion would be performed via API.
     await showProjectPage.deleteProject()
   })
 })

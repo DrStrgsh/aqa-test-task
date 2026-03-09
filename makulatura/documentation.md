@@ -7,6 +7,7 @@
 - API tests for `https://automationexercise.com` endpoints
 - Execution includes desktop and mobile browser contexts
 - Smoke, sanity, regression, etc tests were not explicitly marked in this project since this was not required by the task and the total number of tests is small, but this can be done easily if needed.
+- Deletion of test objects created during a test after the test in which they were created has finished. (Under normal circumstances, creation and deletion would be performed via API, if there were no requirement to delete them specifically within the UI end-to-end flow.)
 
 ### Executed test cases
 
