@@ -1,24 +1,21 @@
-import { waitPageReady } from '@src/utils/ui-waits'
-import { expect, type Page, type Locator } from '@playwright/test'
+import { BasePage } from '@src/pages/core/BasePage'
 import { FooterComponentMobile } from '@src/components/mobileWeb/FooterComponentMobile'
+import { expect, type Page, type Locator } from '@playwright/test'
 
-export class AuthedMainPageMobile {
-  private readonly page: Page
+export class AuthedMainPageMobile extends BasePage {
 
   readonly footer: FooterComponentMobile
   readonly projectsLink: Locator
 
 
   constructor(page: Page) {
-    this.page = page
+    super(page, '/')
     this.footer = new FooterComponentMobile(page)
-
     this.projectsLink = page.getByRole('link', { name: /Projects Work within project/i })
   }
 
   async goto() {
-    await this.page.goto('/')
-    await waitPageReady(this.page)
+    await this.open('/')
   }
 
   async assertVisible() {
@@ -27,5 +24,17 @@ export class AuthedMainPageMobile {
 
   async goToProjects() {
     await this.projectsLink.click()
+  }
+
+  async openProjects() {
+    await this.goToProjects()
+  }
+
+  async expandNavBar() {
+    await this.footer.clickOnMore()
+  }
+
+  async openProjectsPage() {
+    await this.openProjects()
   }
 }

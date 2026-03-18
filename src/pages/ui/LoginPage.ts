@@ -1,7 +1,8 @@
-import { expect, type Page, type Locator } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 import { HeaderComponent } from '@src/components/ui/HeaderComponent'
+import { BasePage } from '@src/pages/core/BasePage'
 
-export class LoginPage {
+export class LoginPage extends BasePage {
   private readonly headerComponent: HeaderComponent
 
   readonly email: Locator
@@ -10,6 +11,7 @@ export class LoginPage {
   readonly loginModal: Locator
 
   constructor(page: Page) {
+    super(page)
     this.headerComponent = new HeaderComponent(page)
     const modalSubmitButton = page.locator('form').locator('input[type="submit"]')
     const modalEmailInput = page.getByRole('textbox', { name: 'Email address' })
@@ -30,6 +32,14 @@ export class LoginPage {
 
   async openLoginModal() {
     await this.headerComponent.openLoginModal()
+  }
+
+  async assertMenuClosedAfterLoginOpen() {
+    await this.loginModal.isVisible()
+  }
+
+  async closeMenuIfOpened() {
+    await this.loginModal.isVisible()
   }
 
   async assertModalContentVisible() {

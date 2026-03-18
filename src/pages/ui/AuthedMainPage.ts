@@ -1,19 +1,17 @@
-import { waitPageReady } from '@src/utils/ui-waits'
+import { BasePage } from '@src/pages/core/BasePage'
 import { SidebarComponent } from '@src/components/ui/SidebarComponent'
 import type { Page } from '@playwright/test'
 
-export class AuthedMainPage {
-  private readonly page: Page
+export class AuthedMainPage extends BasePage {
   private readonly sidebar: SidebarComponent
 
   constructor(page: Page) {
-    this.page = page
+    super(page, '/')
     this.sidebar = new SidebarComponent(page)
   }
 
   async goto() {
-    await this.page.goto('/')
-    await waitPageReady(this.page)
+    await this.open()
   }
 
   async assertVisible() {
@@ -26,5 +24,9 @@ export class AuthedMainPage {
 
   async openProjectsPage() {
     await this.sidebar.openProjectsPage()
+  }
+
+  async openProjects() {
+    await this.openProjectsPage()
   }
 }

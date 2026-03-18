@@ -1,14 +1,12 @@
 import { expect, type Page, type Locator } from '@playwright/test'
-import { waitPageReady } from '@src/utils/ui-waits'
+import { BasePage } from '@src/pages/core/BasePage'
 
-export class ProjectsPageMobile {
-  private readonly page: Page
-
+export class ProjectsPageMobile extends BasePage {
   readonly heading: Locator
   readonly createCustomProjectButton: Locator
 
   constructor(page: Page) {
-    this.page = page
+    super(page, '/projects')
     this.heading = page.getByRole('heading', { name: 'My Project Templates' })
     this.createCustomProjectButton = page.getByRole('link', { name: 'Create Custom Project' })
   }
@@ -18,8 +16,7 @@ export class ProjectsPageMobile {
   }
 
   async goto() {
-    await this.page.goto('/projects')
-    await waitPageReady(this.page)
+    await this.open()
   }
 
   async assertVisible() {
@@ -34,5 +31,10 @@ export class ProjectsPageMobile {
   async openProject(name: string) {
     const project = this.projectLocator(name)
     await project.click()
+  }
+
+  async hasProject(name: string): Promise<boolean> {
+    const project = this.projectLocator(name)
+    return (await project.count()) > 0
   }
 }

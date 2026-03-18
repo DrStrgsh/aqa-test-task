@@ -1,10 +1,8 @@
 import { expect, type Page, type Locator } from '@playwright/test'
-import { waitPageReady } from '@src/utils/ui-waits'
+import { BasePage } from '@src/pages/core/BasePage'
 import type { ProjectData } from '@src/factories/ui/projects'
 
-export class CreateProjectPage {
-  private readonly page: Page
-
+export class CreateProjectPage extends BasePage {
   readonly form: Locator
   readonly nameInput: Locator
   readonly addressInput: Locator
@@ -18,7 +16,7 @@ export class CreateProjectPage {
   readonly mapMarker: Locator
 
   constructor(page: Page) {
-    this.page = page
+    super(page)
     this.form = page.locator('form[action="/projects"]')
     this.nameInput = this.form.locator('input#project_name')
     this.addressInput = this.form.locator('input#custom-address-field')
@@ -37,8 +35,7 @@ export class CreateProjectPage {
   }
 
   async goto() {
-    await this.page.goto('/projects/new')
-    await waitPageReady(this.page, { timeoutMs: 90_000 })
+    await this.open('/projects/new', { timeoutMs: 90_000 })
   }
 
   async assertVisible() {

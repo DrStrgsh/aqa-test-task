@@ -1,24 +1,22 @@
-import { waitPageReady } from '@src/utils/ui-waits'
-import { expect, type Page, type Locator } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 import { HeaderComponent } from '@src/components/ui/HeaderComponent'
+import { BasePage } from '@src/pages/core/BasePage'
 
-export class MainPage {
-  private readonly page: Page
+export class MainPage extends BasePage {
   private readonly headerComponent: HeaderComponent
 
   readonly loginButton: Locator
   readonly header: Locator
 
   constructor(page: Page) {
-    this.page = page
+    super(page, '/')
     this.headerComponent = new HeaderComponent(page)
     this.loginButton = this.headerComponent.loginButton
     this.header = this.headerComponent.header
   }
 
   async goto() {
-    await this.page.goto('/')
-    await waitPageReady(this.page)
+    await this.open()
   }
 
   async assertVisible() {

@@ -1,113 +1,129 @@
+import path from 'path'
 import { test, expect } from '@tests/ui/ui.test'
-import { ProjectsPageMobile } from '@src/pages/mobileWeb/projects/ProjectsPageMobile'
-import { CreateProjectPageMobile } from '@src/pages/mobileWeb/projects/CreateProjectPageMobile'
-import { ShowProjectPageMobile } from '@src/pages/mobileWeb/projects/ShowProjectPageMobile'
-import { createProjectData } from '@src/factories/ui/projects'
 import { routePatterns } from '@src/utils/route-patterns'
 
-test('mobile projects page: user can go to "create project page"', async ({ page }) => {
-  const projectsPageMobile = new ProjectsPageMobile(page)
-  const createProjectPageMobile = new CreateProjectPageMobile(page)
-
-  await test.step('Open projects page', async () => {
-    await projectsPageMobile.goto()
-    await expect(page).toHaveURL('/projects')
-    await projectsPageMobile.assertVisible()
+test.describe('mobile projects page', () => {
+  test.beforeEach(async ({ app }) => {
+    await app.projects.goto()
+    await app.projects.assertVisible()
   })
 
-  await test.step('Open "create custom project page"', async () => {
-    await projectsPageMobile.openCreateCustomProjectPage()
-    await expect(page).toHaveURL('/projects/new')
-    await createProjectPageMobile.assertVisible()
-  })
-})
+  test.afterEach(async ({ app, projectData }) => {
+    await app.projects.goto()
+    const exists = await app.projects.hasProject(projectData.name)
+    if (!exists) return
 
-test('mobile projects page: user can create, read and delete project', async ({ page }) => {
-  const projectData = createProjectData()
-  const createProjectPageMobile = new CreateProjectPageMobile(page)
-  const projectsPageMobile = new ProjectsPageMobile(page)
-  const showProjectPageMobile = new ShowProjectPageMobile(page)
-
-  await test.step('Create project', async () => {
-    await createProjectPageMobile.goto()
-    await createProjectPageMobile.assertVisible()
-    await createProjectPageMobile.fillProjectForm(projectData)
-    await createProjectPageMobile.selectAddress(projectData.address)
-    await createProjectPageMobile.submitForm()
-    await expect(page).toHaveURL(routePatterns.projectsByExternalId)
+    await app.projects.openProject(projectData.name)
+    await app.showProject.deleteProject()
+    await app.projects.goto()
+    await expect(app.projects.assertVisible()).resolves.toBeUndefined()
+    await expect(app.projects.hasProject(projectData.name)).resolves.toBe(false)
   })
 
-  await test.step('Read project', async () => {
-    await projectsPageMobile.goto()
-    await projectsPageMobile.assertVisible()
-    await projectsPageMobile.openProject(projectData.name)
-    await expect(page).toHaveURL(routePatterns.projectsByExternalId)
-    await showProjectPageMobile.assertVisible()
-    await expect(showProjectPageMobile.nameLocator(projectData.name)).toBeVisible()
+  test('user can go to "create project page"', async ({ app, page }) => {
+    await test.step('Open projects page', async () => {
+      await expect(page).toHaveURL('/projects')
+      await app.projects.assertVisible()
+    })
+
+    await test.step('Open "create custom project page"', async () => {
+      await app.projects.openCreateCustomProjectPage()
+      await expect(page).toHaveURL('/projects/new')
+      await app.createProject.assertVisible()
+    })
   })
 
-  await test.step('Delete project', async () => {
-    await projectsPageMobile.goto()
-    await projectsPageMobile.assertVisible()
-    await projectsPageMobile.openProject(projectData.name)
-    await showProjectPageMobile.assertVisible()
-    // Deletion as a part of test flow
-    await showProjectPageMobile.deleteProject()
-    await expect(page).toHaveURL('/projects')
-    await projectsPageMobile.assertVisible()
-    await expect(projectsPageMobile.projectLocator(projectData.name)).not.toBeVisible()
-  })
-})
+  test('user can create, read and delete project', async ({ app, page, projectData }) => {
+    await test.step('Create project', async () => {
+      await app.createProject.goto()
+      await app.createProject.assertVisible()
+      await app.createProject.fillProjectForm(projectData)
+      await app.createProject.selectAddress(projectData.address)
+      await app.createProject.submitForm()
+      await expect(page).toHaveURL(routePatterns.projectsByExternalId)
+    })
 
-test('mobile projects page: validate custom project form rules', async ({ page }) => {
-  const createProjectPageMobile = new CreateProjectPageMobile(page)
-  const validData = createProjectData()
+    await test.step('Read project', async () => {
+      await app.projects.goto()
+      await app.projects.assertVisible()
+      await app.projects.openProject(projectData.name)
+      await expect(page).toHaveURL(routePatterns.projectsByExternalId)
+      await app.showProject.assertVisible()
+      await expect(app.showProject.nameLocator(projectData.name)).toBeVisible()
+    })
 
-  await test.step('Submit button is disabled without required address', async () => {
-    const dataWithoutAddress = { ...validData, address: '' }
-
-    await createProjectPageMobile.goto()
-    await createProjectPageMobile.assertVisible()
-    await createProjectPageMobile.fillProjectForm(dataWithoutAddress)
-    await expect(createProjectPageMobile.createProjectButton).toBeDisabled()
-  })
-
-  await test.step('Subit button is disabled without requried name', async () => {
-    const dataWithoutName = { ...validData, name: '' }
-
-    await createProjectPageMobile.goto()
-    await createProjectPageMobile.assertVisible()
-    await createProjectPageMobile.selectAddress(dataWithoutName.address)
-    await createProjectPageMobile.fillProjectForm(dataWithoutName)
-    await expect(createProjectPageMobile.createProjectButton).toBeDisabled()
+    await test.step('Delete project', async () => {
+      await app.projects.goto()
+      await app.projects.assertVisible()
+      await app.projects.openProject(projectData.name)
+      await app.showProject.assertVisible()
+      await app.showProject.deleteProject()
+      await expect(page).toHaveURL('/projects')
+      await app.projects.assertVisible()
+      await expect(app.projects.projectLocator(projectData.name)).not.toBeVisible()
+    })
   })
 
-  await test.step('Submit button is disabled without required jurisdiction', async () => {
-    await createProjectPageMobile.goto()
-    await createProjectPageMobile.assertVisible()
-    await createProjectPageMobile.fillProjectForm(validData)
-    await expect(createProjectPageMobile.createProjectButton).toBeDisabled()
+  test('validate custom project form rules', async ({ app, projectData }) => {
+    await test.step('Submit button is disabled without required address', async () => {
+      const dataWithoutAddress = { ...projectData, address: '' }
+
+      await app.createProject.goto()
+      await app.createProject.assertVisible()
+      await app.createProject.fillProjectForm(dataWithoutAddress)
+      await expect(app.createProject.createProjectButton).toBeDisabled()
+    })
+
+    await test.step('Submit button is disabled without required name', async () => {
+      const dataWithoutName = { ...projectData, name: '' }
+
+      await app.createProject.goto()
+      await app.createProject.assertVisible()
+      await app.createProject.selectAddress(dataWithoutName.address)
+      await app.createProject.fillProjectForm(dataWithoutName)
+      await expect(app.createProject.createProjectButton).toBeDisabled()
+    })
+
+    await test.step('Submit button is disabled without required jurisdiction', async () => {
+      await app.createProject.goto()
+      await app.createProject.assertVisible()
+      await app.createProject.fillProjectForm(projectData)
+      await expect(app.createProject.createProjectButton).toBeDisabled()
+    })
   })
-})
 
-test.fail('mobile projects page: user cannot create project with name length > 300', async ({ page }) => {
-  const projectData = createProjectData()
-  const createProjectPageMobile = new CreateProjectPageMobile(page)
-  const showProjectPageMobile = new ShowProjectPageMobile(page)
-  const longNameBase = `Proj-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}-`
-  const longName = `${longNameBase}${'x'.repeat(301)}`.slice(0, 301)
-  const longNameData = { ...projectData, name: longName }
+  test('user cannot submit a text file path as address', async ({ app, projectData }) => {
+    const filePath = path.resolve(process.cwd(), 'src', 'test-data', 'ui', 'sample.txt')
+    const dataWithoutName = { ...projectData, name: '' }
 
-  await test.step('Create project with long name', async () => {
-    await createProjectPageMobile.goto()
-    await createProjectPageMobile.assertVisible()
-    await createProjectPageMobile.selectAddress(projectData.address)
-    await createProjectPageMobile.fillProjectForm(longNameData)
-    await createProjectPageMobile.submitForm()
-    await expect(page).toHaveURL(routePatterns.projectsByExternalId)
-    await showProjectPageMobile.assertVisible()
-    await expect(showProjectPageMobile.nameLocator(longName.slice(0, 30))).toContainText(longName.slice(0, 30))
-    // Under normal circumstances, deletion would be performed via API.
-    await showProjectPageMobile.deleteProject()
+    await test.step('Open create project form', async () => {
+      await app.createProject.goto()
+      await app.createProject.assertVisible()
+    })
+
+    await test.step('Paste file path into address field', async () => {
+      await app.createProject.fillProjectForm(dataWithoutName)
+      await app.createProject.addressInput.fill(filePath)
+      await expect(app.createProject.nameInput).toHaveValue('')
+      await expect(app.createProject.createProjectButton).toBeDisabled()
+    })
+  })
+
+  test.fail('user cannot create project with name length > 300', async ({ app, page, projectData }) => {
+    const longNameBase = `Proj-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}-`
+    const longName = `${longNameBase}${'x'.repeat(301)}`.slice(0, 301)
+    const longNameData = { ...projectData, name: longName }
+
+    await test.step('Create project with long name', async () => {
+      await app.createProject.goto()
+      await app.createProject.assertVisible()
+      await app.createProject.selectAddress(projectData.address)
+      await app.createProject.fillProjectForm(longNameData)
+      await app.createProject.submitForm()
+      await expect(page).toHaveURL(routePatterns.projectsByExternalId)
+      await app.showProject.assertVisible()
+      await expect(app.showProject.nameLocator(longName.slice(0, 30))).toContainText(longName.slice(0, 30))
+      await app.showProject.deleteProject()
+    })
   })
 })
